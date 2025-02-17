@@ -38,6 +38,7 @@ export const loginUser = async (userData: FieldValues) => {
       body: JSON.stringify(userData),
     });
     const result = await res.json();
+    console.log("result", result);
     if (result.success) {
       const saveTokenInCookie = await cookies();
       saveTokenInCookie.set("accessToken", result.data.accessToken);
@@ -50,8 +51,13 @@ export const loginUser = async (userData: FieldValues) => {
   }
 };
 
+export const LogOutUser = async () => {
+  const savedToken = await cookies();
+  savedToken.delete("accessToken");
+};
+
 export const getCurrentUser = async () => {
-  const accessToken = (await cookies()).get("accessToken")!.value;
+  const accessToken = (await cookies()).get("accessToken")?.value;
   let decodedData = null;
   if (accessToken) {
     decodedData = await jwtDecode(accessToken);

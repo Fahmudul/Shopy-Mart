@@ -20,8 +20,12 @@ import { loginSchema } from "./loginValidation";
 import { loginUser, verifyRecaptcha } from "@/Services/AuthServices";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get("redirectPath");
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -41,6 +45,11 @@ export default function LoginForm() {
       const res = await loginUser(data);
       if (res?.success) {
         toast.success(res?.message);
+        if (redirectPath) {
+          router.push(redirectPath);
+        } else {
+          router.push("/");
+        }
       } else {
         toast.error(res?.message);
       }
