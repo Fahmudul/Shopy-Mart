@@ -1,14 +1,12 @@
-import { getAllCategories } from "@/Services/Category";
-import ManageCategories from "@/components/modules/shop/category";
-import ManageProducts from "@/components/modules/shop/products/CreateProducts";
-import { useState } from "react";
+import { getAllProducts } from "@/Services/Products";
+import ManageProducts from "@/components/modules/shop/products";
 
 const ProductCategoryPage = async () => {
-  const { data, meta } = await getAllCategories();
-  const categories = data.length > 0 ? data : [];
+  const { data, meta } = await getAllProducts();
+  const products = data.length > 0 ? data : [];
   return (
     <div>
-      <ManageProducts categories={categories} />
+      <ManageProducts products={products} />
     </div>
   );
 };

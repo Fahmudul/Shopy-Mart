@@ -3,27 +3,27 @@
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
-export const createCategory = async (data: FormData) => {
+export const createBrand = async (data: FormData) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brand`, {
       method: "POST",
       headers: {
         Authorization: (await cookies()).get("accessToken")!.value,
       },
       body: data,
     });
-    revalidateTag("Category");
+    revalidateTag("Brand");
     return res.json();
   } catch (error: any) {
     return Error(error);
   }
 };
 
-export const getAllCategories = async () => {
+export const getAllBrands = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brand`, {
       next: {
-        tags: ["Category"],
+        tags: ["Brand"],
       },
     });
     // console.log(await res.json());
@@ -34,19 +34,16 @@ export const getAllCategories = async () => {
   }
 };
 
-export const deleteCategory = async (id: string) => {
+export const deleteBrand = async (id: string) => {
   // console.log("id", id);
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/category/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: (await cookies()).get("accessToken")!.value,
-        },
-      }
-    );
-    revalidateTag("Category");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brand/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: (await cookies()).get("accessToken")!.value,
+      },
+    });
+    revalidateTag("Brand");
 
     const result = await res.json();
     return result;

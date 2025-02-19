@@ -1,5 +1,4 @@
 "use client";
-import CreateCategoryModal from "./CreateCategoryModal";
 import { SMTable } from "@/components/ui/core/SMTable";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
@@ -7,20 +6,22 @@ import { Trash } from "lucide-react";
 import { deleteCategory } from "@/Services/Category";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ICategory } from "@/types/category";
+import { IBrand } from "@/types/brand";
+import CreateBrandModal from "./CreateBrandModal";
 import DeleteConfirmationModal from "@/components/ui/core/Modal/Modal";
+import { deleteBrand } from "@/Services/Brand";
 
 type TCategoriesProps = {
-  categories: ICategory[];
+  brands: IBrand[];
 };
 
-const ManageCategories = ({ categories }: TCategoriesProps) => {
+const ManageBrands = ({ brands }: TCategoriesProps) => {
   // console.log("categories", categories);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
-  const handleDelete = (data: ICategory) => {
+  const handleDelete = (data: IBrand) => {
     console.log(data);
     setSelectedId(data?._id);
     setSelectedItem(data?.name);
@@ -30,7 +31,7 @@ const ManageCategories = ({ categories }: TCategoriesProps) => {
   const handleDeleteConfirm = async () => {
     try {
       if (selectedId) {
-        const res = await deleteCategory(selectedId);
+        const res = await deleteBrand(selectedId);
         console.log(res);
         if (res.success) {
           toast.success(res.message);
@@ -43,14 +44,14 @@ const ManageCategories = ({ categories }: TCategoriesProps) => {
       console.error(err?.message);
     }
   };
-  const columns: ColumnDef<ICategory>[] = [
+  const columns: ColumnDef<IBrand>[] = [
     {
       accessorKey: "name",
-      header: () => <div>Category Name</div>,
+      header: () => <div>Brand Name</div>,
       cell: ({ row }) => (
         <div className="flex items-center space-x-3">
           <Image
-            src={row.original.icon}
+            src={row.original.logo}
             alt={row.original.name}
             width={40}
             height={40}
@@ -96,9 +97,9 @@ const ManageCategories = ({ categories }: TCategoriesProps) => {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Manage Categories</h1>
-        <CreateCategoryModal />
+        <CreateBrandModal />
       </div>
-      <SMTable data={categories} columns={columns} />
+      <SMTable data={brands} columns={columns} />
       <DeleteConfirmationModal
         name={selectedItem}
         isOpen={isModalOpen}
@@ -109,4 +110,4 @@ const ManageCategories = ({ categories }: TCategoriesProps) => {
   );
 };
 
-export default ManageCategories;
+export default ManageBrands;

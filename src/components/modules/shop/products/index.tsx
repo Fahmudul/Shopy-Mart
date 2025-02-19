@@ -1,29 +1,27 @@
 "use client";
-import { ICategory } from "@/types";
-import CreateCategoryModal from "./CreateCategoryModal";
-import { SMTable } from "@/components/ui/core/SMTable";
 import { ColumnDef } from "@tanstack/react-table";
+import { Edit, Eye, Plus, Trash } from "lucide-react";
 import Image from "next/image";
-import { Trash } from "lucide-react";
-
-type TCategoriesProps = {
-  categories: ICategory[];
-};
-
-const ManageProducts = ({ categories }: TCategoriesProps) => {
-  console.log("categories", categories);
-  const handleDelete = (data: ICategory) => {
-    console.log(data);
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { IProduct } from "@/types/product";
+import { SMTable } from "@/components/ui/core/SMTable";
+const ManageProducts = ({ products }: { products: IProduct[] }) => {
+  const router = useRouter();
+  const handleView = (product: IProduct) => {
+    console.log("Viewing product:", product);
   };
-
-  const columns: ColumnDef<ICategory>[] = [
+  const handleDelete = (productId: string) => {
+    console.log("Deleting product with ID:", productId);
+  };
+  const columns: ColumnDef<IProduct>[] = [
     {
       accessorKey: "name",
-      header: () => <div>Category Name</div>,
+      header: "Product Name",
       cell: ({ row }) => (
         <div className="flex items-center space-x-3">
           <Image
-            src={row.original.icon}
+            src={row.original.imageUrls[0]}
             alt={row.original.name}
             width={40}
             height={40}
@@ -34,46 +32,83 @@ const ManageProducts = ({ categories }: TCategoriesProps) => {
       ),
     },
     {
-      accessorKey: "isActive",
-      header: () => <div>isActive</div>,
+      accessorKey: "category",
+      header: "Category",
+      cell: ({ row }) => <span>{row.original.category.name}</span>,
+    },
+    {
+      accessorKey: "brand",
+      header: "Brand",
+      cell: ({ row }) => <span>{row.original.brand.name}</span>,
+    },
+    {
+      accessorKey: "stock",
+      header: "Stock",
+      cell: ({ row }) => <span>{row.original.stock}</span>,
+    },
+    {
+      accessorKey: "price",
+      header: "Price",
+      cell: ({ row }) => <span>$ {row.original.price.toFixed(2)}</span>,
+    },
+    {
+      accessorKey: "offerPrice",
+      header: "Ofter Price",
       cell: ({ row }) => (
-        <div>
-          {row.original.isActive ? (
-            <p className="text-green-500 border bg-green-100 w-14 text-center px-1 rounded">
-              True
-            </p>
-          ) : (
-            <p className="text-red-500 border bg-red-100 w-14 text-center px-1 rounded">
-              False
-            </p>
-          )}
-        </div>
+        <span>
+          $ {row.original.offerPrice ? row.original.offerPrice.toFixed(2) : "0"}
+        </span>
       ),
     },
     {
       accessorKey: "action",
-      header: () => <div>Action</div>,
+      header: "Action",
       cell: ({ row }) => (
-        <button
-          className="text-red-500"
-          title="Delete"
-          onClick={() => handleDelete(row.original)}
-        >
-          <Trash className="w-5 h-5" />
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            className="text-gray-500 hover:text-blue-500"
+            title="View"
+            onClick={() => handleView(row.original)}
+          >
+            <Eye className="w-5 h-5" />
+          </button>
+          <button
+            className="text-gray-500 hover:text-green-500"
+            title="Edit"
+            onClick={() =>
+              router.push(
+                `/user/shop/all-products/update-product/${row.original._id}`
+              )
+            }
+          >
+            <Edit className="w-5 h-5" />
+          </button>
+          <button
+            className="text-gray-500 hover:text-red-500"
+            title="Delete"
+            onClick={() => handleDelete(row.original._id)}
+          >
+            <Trash className="w-5 h-5" />
+          </button>
+        </div>  
       ),
     },
   ];
-
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Manage Categories</h1>
-        <CreateCategoryModal />
+        <h1 className="text-xl font-bold">Manage Products</h1>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => router.push("/user/shop/all-products/add-product")}
+            size="sm"
+          >
+            Add Product <Plus />
+          </Button>
+        </div>
       </div>
-      <SMTable data={categories} columns={columns} />
+      <SMTable columns={columns} data={products || []} />
     </div>
   );
 };
-
 export default ManageProducts;
