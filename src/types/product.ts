@@ -36,3 +36,4 @@ export interface IProduct {
   updatedAt: string;
   offerPrice: number;
 }
+
